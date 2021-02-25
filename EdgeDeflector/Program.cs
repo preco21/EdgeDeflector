@@ -147,7 +147,7 @@ namespace EdgeDeflector
 
             if (IsHttpUri(new_uri))
             {
-                return new_uri;
+                return replaceSearchEngine(new_uri);
             }
 
             // May be new-style Cortana URI - try and split out
@@ -157,12 +157,21 @@ namespace EdgeDeflector
                 if (IsHttpUri(cortanaUri))
                 {
                     // Correctly form the new URI before returning
-                    return cortanaUri;
+                    return replaceSearchEngine(cortanaUri);
                 }
             }
 
             // defer fallback to web browser
-            return "http://" + new_uri;
+            return "https://" + replaceSearchEngine(new_uri);
+        }
+
+        static string replaceSearchEngine(string new_uri)
+        {
+            int index = new_uri.IndexOf("&");
+            if (index > 0) {
+                new_uri = new_uri.Substring(0, index);
+            }
+            return new_uri.Replace("bing.com/search?q=", "google.com/search?q=");
         }
 
         static void OpenUri(string uri)
